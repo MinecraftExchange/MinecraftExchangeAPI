@@ -1,0 +1,59 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.mcexchange</groupId>
+  <artifactId>ExchangeBukkit</artifactId>
+  <version>dev-SNAPSHOT</version>
+  <packaging>jar</packaging>
+
+  <name>Minecraft Exchange API</name>
+
+  <properties>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+    	<groupId>commons-collections</groupId>
+    	<artifactId>commons-collections</artifactId>
+    	<version>3.2.1</version>
+    </dependency>
+  </dependencies>
+  <description>The API used for integrating with Minecraft Exchange.</description>
+  <build>
+  	<plugins>
+  		<plugin>
+  			<groupId>org.codehaus.mojo</groupId>
+  			<artifactId>shade-maven-plugin</artifactId>
+  			<version>1.0-alpha-13</version>
+  			<executions>
+  				<execution>
+  					<phase>package</phase>
+  					<goals>
+  						<goal>shade</goal>
+  					</goals>
+  				</execution>
+  			</executions>
+  		</plugin>
+  	</plugins>
+  </build>
+  <repositories>
+	<repository>
+	  <id>bukkit-repo</id>
+	  <url>http://repo.bukkit.org/artifactory/repo</url>
+	</repository>
+	<repository>
+	  <id>spout-repo</id>
+	  <url>http://repo.getspout.org/</url>
+	</repository>
+  </repositories>
+  <modules>
+  </modules>
+</project>
