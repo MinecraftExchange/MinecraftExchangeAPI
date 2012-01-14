@@ -1,23 +1,61 @@
 package org.mcexchange.api.plugin;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.net.JarURLConnection;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.jar.Attributes;
+
 /**
  * An instance of ExchangePluginLoader is used to load all of the plugins.
  */
-public interface ExchangePluginLoader {
+public class ExchangePluginLoader {
 	/**
-	 * This method has two distinct implementations:
-	 * <br />
-	 * <h3>Client (Minecraft Server)</h3>
-	 * This method first loads any build-in plugins. Second, it iterates through a
-	 * list of loaded classes. The specifics  of the loaded class list may vary, but 
-	 * they are typically the Plugin instances already loaded as Plugins for the
-	 * Minecraft Server. Then, if an Instrument was set up, it uses its getAllLoadedClasses()
-	 * method to search for ExchangePlugins. Finally, it looks in the "plugins"
-	 * directory of its DataFolder for classes that implement ExchangePlugin.
-	 * <3>Server (Exchange Server)</h3>
-	 * On the server, things are much simpler. First it loads any built-in plugins.
-	 * Then it loads all of the implementations of ExchangePlugin it can find in
-	 * the "plugins" directory. That's it. :D
+	 * This method loads the registered ExchangePlugin(s) in the specified jar.
+	 * 
+	 * @throws IOException If the given jar file can't be read from.
+	 * @throws ClassNotFoundException If the specified class in the jar can't be loaded.
+	 * @throws IllegalAccessException If the specified class doesn't have a public constructor with no arguments.
+	 * @throws InstantiationException If the specified class doesn't have a constructor with no arguments or if the specified class is abstract. 
 	 */
-	public void loadPlugins();
+	public List<ExchangePlugin> loadPlugins(URL jf) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException {
+		URL u = new URL("jar", "", jf + "!/");
+		JarURLConnection uc = (JarURLConnection)u.openConnection();
+		Attributes attr = uc.getMainAttributes();
+		String name = attr.getValue("Exchange-Main");
+		URLClassLoader ucl = new URLClassLoader(new URL[]{jf});
+		Class<?> c = ucl.loadClass(name);
+		List<Class<?>> interfaces = Arrays.asList(c.getInterfaces());
+		if(interfaces.contains(ExchangePlugin.class)) {
+			ExchangePlugin ep = c.asSubclass(ExchangePlugin.class).newInstance();
+			return Arrays.asList(ep);
+		} else if(interfaces.contains(PluginSuite.class)) {
+			PluginSuite ps = c.asSubclass(PluginSuite.class).newInstance();
+			return ps.getPlugins();
+		} else throw new RuntimeException(jf.toString() + " specifies an invalid class as an ExchangePlugin.");
+	}
+	
+	/**
+	 * This method loads all of the ExchangePlugins available.
+	 */
+	public List<ExchangePlugin> loadAllPlugins()  throws Exception {
+		List<ExchangePlugin> result = new ArrayList<ExchangePlugin>();
+		File plugindir = new File("./plugins");
+		File[] contents = plugindir.listFiles(new FilenameFilter() {
+			public boolean accept(File arg0, String arg1) {
+				return arg1.endsWith(".jar");
+			}
+		});
+		if(contents==null) return result;
+		for(File f : contents) {
+			URL url = f.toURI().toURL();
+			result.addAll(loadPlugins(url));
+		}
+		return result;
+	}
 }
