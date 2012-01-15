@@ -3,6 +3,12 @@ package org.mcexchange.api;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.SocketChannel;
+import java.util.List;
+import java.util.Map;
+
+import org.mcexchange.api.plugin.ConnectionPlugin;
+import org.mcexchange.api.plugin.ExchangePlugin;
+import org.mcexchange.api.plugin.PacketPlugin;
 
 /**
  * Represents a connection from client to server or vise versa.
@@ -23,9 +29,19 @@ public class Connection implements Runnable {
 	 */
 	public Connection(SocketChannel channel) throws IOException {
 		packets = new RegisteredPackets(this);
-		
+		//register PacketPlugin packets.
+		for(ExchangePlugin ep : ExchangePlugin.plugins.get(PacketPlugin.class)) {
+			PacketPlugin pp = (PacketPlugin) ep;
+			Map<Byte,Packet> packetmap = pp.getPackets(this);
+			for(byte b : packetmap.keySet()) {
+				Packet p = packetmap.get(b);
+				packets.assignId(b, p);
+				packets.assignPlugin(b, pp);
+			}
+			List<Byte> additional = pp.getNotifyPackets(this);
+			for(byte b : additional) packets.assignPlugin(b, pp);
+		}
 		this.channel = channel;
-		System.out.println(channel);
 	}
 	
 	/**
@@ -40,6 +56,7 @@ public class Connection implements Runnable {
 			short length = read.getShort();
 			NioUtil.read(channel, read, length);
 			p.read(read);
+			for(PacketPlugin pp : packets.getPlugins(p)) pp.onPacketRecieved(this, p);
 			return p;
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -96,5 +113,6 @@ public class Connection implements Runnable {
 		}
 		sendPacket(packets.getDisconnect());
 		disconnect();
+		for(ExchangePlugin p : ExchangePlugin.plugins.get(ConnectionPlugin.class)) ((ConnectionPlugin) p).onConnectionEnd(this);
 	}
 }

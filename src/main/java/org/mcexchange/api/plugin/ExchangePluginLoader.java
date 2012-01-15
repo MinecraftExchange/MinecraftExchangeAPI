@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.JarURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class ExchangePluginLoader {
 	/**
 	 * This method loads all of the ExchangePlugins available.
 	 */
-	public List<ExchangePlugin> loadAllPlugins()  throws Exception {
+	public List<ExchangePlugin> loadAllPlugins() {
 		List<ExchangePlugin> result = new ArrayList<ExchangePlugin>();
 		File plugindir = new File("./plugins");
 		File[] contents = plugindir.listFiles(new FilenameFilter() {
@@ -53,8 +54,20 @@ public class ExchangePluginLoader {
 		});
 		if(contents==null) return result;
 		for(File f : contents) {
-			URL url = f.toURI().toURL();
-			result.addAll(loadPlugins(url));
+			URL url = null;
+			try {
+				url = f.toURI().toURL();
+			} catch(MalformedURLException e) {
+				System.err.println("Could not create a URL for a plugin's jar file!");
+				e.printStackTrace();
+				continue;
+			}
+			try {
+				result.addAll(loadPlugins(url));
+			} catch(Exception e) {
+				System.err.println("Could not load the plugin found at \"" + url.toString() + "\"!");
+				e.printStackTrace();
+			}
 		}
 		return result;
 	}
