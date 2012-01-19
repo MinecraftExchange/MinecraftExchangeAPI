@@ -8,6 +8,7 @@
   <packaging>jar</packaging>
 
   <name>Minecraft Exchange API</name>
+  <description>The API used for integrating with Minecraft Exchange.</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -26,24 +27,6 @@
     	<version>3.2.1</version>
     </dependency>
   </dependencies>
-  <description>The API used for integrating with Minecraft Exchange.</description>
-  <build>
-  	<plugins>
-  		<plugin>
-  			<groupId>org.codehaus.mojo</groupId>
-  			<artifactId>shade-maven-plugin</artifactId>
-  			<version>1.0-alpha-13</version>
-  			<executions>
-  				<execution>
-  					<phase>package</phase>
-  					<goals>
-  						<goal>shade</goal>
-  					</goals>
-  				</execution>
-  			</executions>
-  		</plugin>
-  	</plugins>
-  </build>
   <repositories>
 	<repository>
 	  <id>bukkit-repo</id>

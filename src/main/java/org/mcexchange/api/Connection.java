@@ -29,19 +29,27 @@ public class Connection implements Runnable {
 	 */
 	public Connection(SocketChannel channel) throws IOException {
 		packets = new RegisteredPackets(this);
-		//register PacketPlugin packets.
-		for(ExchangePlugin ep : ExchangePlugin.plugins.get(PacketPlugin.class)) {
-			PacketPlugin pp = (PacketPlugin) ep;
-			Map<Byte,Packet> packetmap = pp.getPackets(this);
-			for(byte b : packetmap.keySet()) {
-				Packet p = packetmap.get(b);
-				packets.assignId(b, p);
-				packets.assignPlugin(b, pp);
-			}
-			List<Byte> additional = pp.getNotifyPackets(this);
-			for(byte b : additional) packets.assignPlugin(b, pp);
-		}
 		this.channel = channel;
+		//register PacketPlugin packets.
+		List<ExchangePlugin> pps = ExchangePlugin.plugins.get(PacketPlugin.class);
+		if(pps != null) {
+			for(ExchangePlugin ep : pps) {
+				PacketPlugin pp = (PacketPlugin) ep;
+				Map<Byte,Packet> packetmap = pp.getPackets(this);
+				for(byte b : packetmap.keySet()) {
+					Packet p = packetmap.get(b);
+					packets.assignId(b, p);
+					packets.assignPlugin(b, pp);
+				}
+				List<Byte> additional = pp.getNotifyPackets(this);
+				for(byte b : additional) packets.assignPlugin(b, pp);
+			}
+		}
+		List<ExchangePlugin> cps = ExchangePlugin.plugins.get(ConnectionPlugin.class);
+		if(cps != null) {
+			for(ExchangePlugin ep : cps) ((ConnectionPlugin) ep).onConnectionEstablished(this);
+		}
+		
 	}
 	
 	/**
@@ -109,10 +117,13 @@ public class Connection implements Runnable {
 	public void run() {
 		while(!Thread.currentThread().isInterrupted()) {
 			Packet recieved = readPacket();
-			recieved.run();
+			if(recieved!=null)recieved.run();
 		}
 		sendPacket(packets.getDisconnect());
 		disconnect();
-		for(ExchangePlugin p : ExchangePlugin.plugins.get(ConnectionPlugin.class)) ((ConnectionPlugin) p).onConnectionEnd(this);
+		List<ExchangePlugin> cps = ExchangePlugin.plugins.get(ConnectionPlugin.class);
+		if(cps != null) {
+			for(ExchangePlugin ep : cps) ((ConnectionPlugin) ep).onConnectionEnd(this);
+		}
 	}
 }

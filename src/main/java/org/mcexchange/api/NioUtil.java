@@ -80,42 +80,42 @@ public class NioUtil {
 			int pos = ((i - (i%8))/8);
 			switch(i%8) {
 			case 0:
-				temp = (byte) (bytes[pos]&Byte.parseByte("10000000", 2));
-				temp>>=7;
+				temp = (byte) (bytes[pos]&(byte)Integer.parseInt("10000000", 2));
+				temp = (byte) ((byte) temp>>7 & 0x01);
 				bools[i] = temp==1 ? true : false;
 				break;
 			case 1:
-				temp = (byte) (bytes[pos]&Byte.parseByte("01000000", 2));
-				temp>>=6;
+				temp = (byte) (bytes[pos]&(byte)Integer.parseInt("01000000", 2));
+				temp = (byte) ((byte) temp>>6 & 0x01);
 				bools[i] = temp==1 ? true : false;
 				break;
 			case 2:
-				temp = (byte) (bytes[pos]&Byte.parseByte("00100000", 2));
-				temp>>=5;
+				temp = (byte) (bytes[pos]&(byte)Integer.parseInt("00100000", 2));
+				temp = (byte) ((byte) temp>>5 & 0x01);
 				bools[i] = temp==1 ? true : false;
 				break;
 			case 3:
-				temp = (byte) (bytes[pos]&Byte.parseByte("00010000", 2));
-				temp>>=4;
+				temp = (byte) (bytes[pos]&(byte)Integer.parseInt("00010000", 2));
+				temp = (byte) ((byte) temp>>4 & 0x01);
 				bools[i] = temp==1 ? true : false;
 				break;
 			case 4:
-				temp = (byte) (bytes[pos]&Byte.parseByte("00001000", 2));
-				temp>>=3;
+				temp = (byte) (bytes[pos]&(byte)Integer.parseInt("00001000", 2));
+				temp = (byte) ((byte) temp>>3 & 0x01);
 				bools[i] = temp==1 ? true : false;
 				break;
 			case 5:
-				temp = (byte) (bytes[pos]&Byte.parseByte("00000100", 2));
-				temp>>=2;
+				temp = (byte) (bytes[pos]&(byte)Integer.parseInt("00000100", 2));
+				temp = (byte) ((byte) temp>>2 & 0x01);
 				bools[i] = temp==1 ? true : false;
 				break;
 			case 6:
-				temp = (byte) (bytes[pos]&Byte.parseByte("00000010", 2));
-				temp>>=1;
+				temp = (byte) (bytes[pos]&(byte)Integer.parseInt("00000010", 2));
+				temp = (byte) ((byte) temp>>1 & 0x01);
 				bools[i] = temp==1 ? true : false;
 				break;
 			case 7:
-				temp = (byte) (bytes[pos]&Byte.parseByte("00000001", 2));
+				temp = (byte) (bytes[pos]&(byte)Integer.parseInt("00000001", 2));
 				bools[i] = temp==1 ? true : false;
 				break;
 			}
@@ -135,36 +135,36 @@ public class NioUtil {
 			String num = bools[i] ? "1" : "0";
 			switch(i%8) {
 			case 0:
-				bytes[pos]&=Byte.parseByte("01111111", 2);
-				bytes[pos]|=Byte.parseByte(num + "1111111", 2);
+				bytes[pos]&=(byte)Integer.parseInt("01111111", 2);
+				bytes[pos]|=(byte)Integer.parseInt(num + "1111111", 2);
 				break;
 			case 1:
-				bytes[pos]&=Byte.parseByte("10111111", 2);
-				bytes[pos]|=Byte.parseByte("1" + num + "111111", 2);
+				bytes[pos]&=(byte)Integer.parseInt("10111111", 2);
+				bytes[pos]|=(byte)Integer.parseInt("1" + num + "111111", 2);
 				break;
 			case 2:
-				bytes[pos]&=Byte.parseByte("11011111", 2);
-				bytes[pos]|=Byte.parseByte("11" + num + "11111", 2);
+				bytes[pos]&=(byte)Integer.parseInt("11011111", 2);
+				bytes[pos]|=(byte)Integer.parseInt("11" + num + "11111", 2);
 				break;
 			case 3:
-				bytes[pos]&=Byte.parseByte("11101111", 2);
-				bytes[pos]|=Byte.parseByte("111" + num + "1111", 2);
+				bytes[pos]&=(byte)Integer.parseInt("11101111", 2);
+				bytes[pos]|=(byte)Integer.parseInt("111" + num + "1111", 2);
 				break;
 			case 4:
-				bytes[pos]&=Byte.parseByte("11110111", 2);
-				bytes[pos]|=Byte.parseByte("1111" + num + "111", 2);
+				bytes[pos]&=(byte)Integer.parseInt("11110111", 2);
+				bytes[pos]|=(byte)Integer.parseInt("1111" + num + "111", 2);
 				break;
 			case 5:
-				bytes[pos]&=Byte.parseByte("11111011", 2);
-				bytes[pos]|=Byte.parseByte("11111" + num + "11", 2);
+				bytes[pos]&=(byte)Integer.parseInt("11111011", 2);
+				bytes[pos]|=(byte)Integer.parseInt("11111" + num + "11", 2);
 				break;
 			case 6:
-				bytes[pos]&=Byte.parseByte("11111101", 2);
-				bytes[pos]|=Byte.parseByte("111111" + num + "1", 2);
+				bytes[pos]&=(byte)Integer.parseInt("11111101", 2);
+				bytes[pos]|=(byte)Integer.parseInt("111111" + num + "1", 2);
 				break;
 			case 7:
-				bytes[pos]&=Byte.parseByte("11111110", 2);
-				bytes[pos]|=Byte.parseByte("1111111" + num, 2);
+				bytes[pos]&=(byte)Integer.parseInt("11111110", 2);
+				bytes[pos]|=(byte)Integer.parseInt("1111111" + num, 2);
 				break;
 			}
 		}

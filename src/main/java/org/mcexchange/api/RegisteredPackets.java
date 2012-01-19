@@ -1,5 +1,6 @@
 package org.mcexchange.api;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.collections.BidiMap;
@@ -93,7 +94,7 @@ public class RegisteredPackets {
 	 */
 	@SuppressWarnings("unchecked")
 	public Collection<PacketPlugin> getPlugins(byte b) {
-		return extra.getCollection(b);
+		return extra.getCollection(b)==null ? new ArrayList<PacketPlugin>() : extra.getCollection(b);
 	}
 	
 	/**

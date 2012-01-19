@@ -10,14 +10,6 @@ public interface PluginPlugin extends ExchangePlugin {
 	public Class<? extends ExchangePlugin>[] getPlugins();
 	
 	/**
-	 * This method is called when a class that implements one of the
-	 * interfaces from getPlugins() is found. This method is expected
-	 * to instantiate the given class and return the newly created
-	 * instance.
-	 */
-	public ExchangePlugin getObjectFromClass(Class<? extends ExchangePlugin> clazz);
-	
-	/**
 	 * This method is called once an instance of a class that implements
 	 * one of the interfaces gotten from getPlugins() is found. After this
 	 * method is called, the object [that this method has been called on]
